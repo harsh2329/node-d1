@@ -2,7 +2,7 @@ const express = require("express") //express....
 const mongoose = require("mongoose")
 //express object..
 const app = express()
-
+app.use(express.json)
 
 //import role routes
 
