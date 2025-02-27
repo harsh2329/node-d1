@@ -9,6 +9,9 @@ app.use(express.json)
 const roleRoutes = require("./src/routes/RoleRoutes")
 app.use(roleRoutes)
 
+const UserRoutes = require("./src/routes/UserRoutes")
+app.use('/api', UserRoutes)
+
 
 
 mongoose.connect("mongodb://127.0.0.1:27017/25_node_internship").then(()=>{
@@ -21,3 +24,5 @@ const PORT = 3000
 app.listen(PORT,()=>{
     console.log("server started on port number ",PORT)
 })
+
+module.exports = app;
