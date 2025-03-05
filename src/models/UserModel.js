@@ -22,6 +22,10 @@ const userSchema = new Schema(
         },
         DateJoined:{
             type:Date  
+        },
+        roleId:{
+            type:Schema.Types.ObjectId,
+            ref:"roles"
         }
     }
 )
