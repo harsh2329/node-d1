@@ -2,7 +2,9 @@ const express = require("express") //express....
 const mongoose = require("mongoose")
 //express object..
 const app = express()
-app.use(express.json)
+app.use(express.json())
+const cors = require("cors")
+app.use(cors()) // *
 
 //import role routes
 

@@ -1,5 +1,64 @@
 const userModel = require("../models/UserModel");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
+
+const Login = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+
+        const foundUserFromEmail = await userModel.findOne({ email: email }).populate("roleId");
+        console.log(foundUserFromEmail);
+
+        if (foundUserFromEmail != null) {
+            const isMatch = bcrypt.compareSync(password, foundUserFromEmail.password);
+            if (isMatch == true) {
+                res.status(200).json({
+                    message: "login success",
+                    data: foundUserFromEmail,
+                });
+            } else {
+                res.status(404).json({
+                    message: "invalid credentials",
+                });
+            }
+        } else {
+            res.status(404).json({
+                message: "Email not found",
+            });
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Internal server error",
+            error: err.message
+        });
+    }
+};
+
+const signup = async (req, res) => {
+    try {
+        const password = req.body.password;
+        if (!password) {
+            throw new Error("Password is required");
+        }
+        console.log("Password:", password); // Debugging statement
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(password, salt);
+        req.body.password = hashedPassword;
+        const createdUser = await userModel.create(req.body);
+        res.status(201).json({
+            message: "user created..",
+            data: createdUser,
+        });
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "error",
+            data: err.message,
+        });
+    }
+};
+
 const addUser1 = async (req, res) => {
     try {
         const createdUser = await userModel.create(req.body);
@@ -53,5 +112,5 @@ const getUsersById = async (req, res) => {
 };
 
 module.exports = {
-    getAllUsers, addUsers, deleteUsers, getUsersById, addUser1
+    getAllUsers, addUsers, deleteUsers, getUsersById, addUser1, Login, signup
 };

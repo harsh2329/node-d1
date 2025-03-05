@@ -11,10 +11,14 @@ const userSchema = new Schema(
             type:String
         },
         Email:{
-            type:String
+            type:String,
+            unique:true
         },
         Password:{
-            type:Number
+            type:String
+        },
+        ConfirmPassword:{
+            type:String
         },
         Role:{
             type:String
