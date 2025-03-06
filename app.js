@@ -1,18 +1,31 @@
 const express = require("express") //express....
 const mongoose = require("mongoose")
+const cors = require("cors")
 //express object..
 const app = express()
-app.use(express.json())
-const cors = require("cors")
 app.use(cors()) // *
+app.use(express.json()) //to accept data as json...
+
 
 //import role routes
-
 const roleRoutes = require("./src/routes/RoleRoutes")
 app.use(roleRoutes)
 
-const UserRoutes = require("./src/routes/UserRoutes")
-app.use('/api', UserRoutes)
+//userRoutes
+const userRoutes = require("./src/routes/UserRoutes")
+app.use(userRoutes)
+
+const stateRoutes = require("./src/routes/StateRoutes")
+app.use("/state",stateRoutes) //
+//http://localhost:3000/addState
+//http://localhost:3000/state/addState
+
+const cityRoutes = require("./src/routes/CityRoutes")
+app.use("/city",cityRoutes) //http://localhost:3000/city/addCity
+
+const areaRoutes = require("./src/routes/AreaRoutes")
+app.use("/area",areaRoutes) //http://localhost:3000/area/add
+
 
 
 
@@ -26,5 +39,3 @@ const PORT = 3000
 app.listen(PORT,()=>{
     console.log("server started on port number ",PORT)
 })
-
-module.exports = app;
