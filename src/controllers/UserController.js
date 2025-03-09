@@ -6,7 +6,7 @@ const Login = async (req, res) => {
         const email = req.body.email;
         const password = req.body.password;
 
-        const foundUserFromEmail = await userModel.findOne({ email: email }).populate("roleId");
+        const foundUserFromEmail = await userModel.findOne({ email: email })
         console.log(foundUserFromEmail);
 
         if (foundUserFromEmail != null) {
