@@ -27,6 +27,7 @@ const getCities = async (req, res) => {
 };
 
 const getCityByStateId = async (req, res) => {
+ 
   try {
     const cities = await cityModel.find({ stateId: req.params.stateId });
     res.status(200).json({
@@ -36,6 +37,7 @@ const getCityByStateId = async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: "city  not found",
+      
     });
   }
 };

@@ -26,6 +26,9 @@ app.use("/city",cityRoutes) //http://localhost:3000/city/addCity
 const areaRoutes = require("./src/routes/AreaRoutes")
 app.use("/area",areaRoutes) //http://localhost:3000/area/add
 
+const locationRoutes = require("./src/routes/LocationRoutes")
+app.use("/location",locationRoutes) //http://localhost:3000/location/add
+
 
 
 
