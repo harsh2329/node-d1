@@ -3,11 +3,6 @@ const Schema = mongoose.Schema;
 
 const locationSchema = new Schema({ 
 
-
-locationId:{
-    type:Number
-   
-},
 title:{
     type:String,
     required:true,
