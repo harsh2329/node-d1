@@ -59,3 +59,5 @@ src:
     models    : schema : collectoin -->controller
     routes    : end point --> controller function n
     utils     : utility functions.....
+
+    aaj maine mail mai add kiya mera khudka particular embeded img 
