@@ -4,7 +4,7 @@ const addLocations = async (req, res )  =>{
     try {
     const savedLocations = await LocationModel.create(req.body);
     res.status(201).json({
-        message:"Hoarding added sucessfully " ,
+        message:"Restaurant added sucessfully " ,
         data:savedLocations,
     })
     }catch (err){
