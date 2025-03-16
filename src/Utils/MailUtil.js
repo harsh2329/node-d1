@@ -39,7 +39,7 @@ const sendingMail = async (to, subject, text) => {
 
 module.exports = { sendingMail };
 
-// sendingMail("hsoni2392003@gmail.com", "test mail", "this is a test mail")
+// sendingMail("mbpfocus21@gmail.com", "test mail", "this is a test mail")
 //     .catch(error => {
 //         console.error('Failed to send email:', error);
 //     });
