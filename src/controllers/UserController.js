@@ -1,5 +1,6 @@
 const userModel = require("../models/UserModel");
 const bcrypt = require("bcrypt");
+const { sendingMail } = require("../Utils/MailUtil");
 
 const Login = async (req, res) => {
     try {
@@ -47,6 +48,13 @@ const signup = async (req, res) => {
         const hashedPassword = bcrypt.hashSync(password, salt);
         req.body.password = hashedPassword;
         const createdUser = await userModel.create(req.body);
+
+
+        // console.log("MailUtil Object:", mailUtil);
+        // mail bhejhneke liye user ko 
+        await sendingMail(createdUser.email, "Welcome to Bhookbusters", "Thank you for signing up!");
+
+
         res.status(201).json({
             message: "user created..",
             data: createdUser,
