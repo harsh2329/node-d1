@@ -3,10 +3,10 @@ const bcrypt = require("bcrypt");
 const { sendingMail } = require("../Utils/MailUtil");
 const multer = require('multer');
 const path = require('path'); // npm install path karna hai idhar 
-
+const cloudinaryUtil = require("../Utils/CloudinaryUtil");
 // storage banaya 
 const storage = multer.diskStorage({
-    destination:"./uploads",
+    // destination:"./uploads",/
     filename:function(req,file,cb){
         cb(null,file.originalname)
     }
@@ -22,6 +22,7 @@ const upload = multer({
 
 const Login = async (req, res) => {
     try {
+        
         const email = req.body.email;
         const password = req.body.password;
 
@@ -36,7 +37,7 @@ const Login = async (req, res) => {
                     data: foundUserFromEmail,
                 });
             } else {
-                res.status(404).json({
+                res.status(401).json({
                     message: "invalid credentials",
                 });
             }
@@ -156,20 +157,45 @@ const getUsersById = async (req, res) => {
 // };
 
 const addSignupWithFile = async (req, res) => {  
+    console.log(req.body)
     // same naam jo multer ke obj ka banaya hai 
-        upload(req, res, (err) => {
+        upload(req, res, async (err) => {
             if(err){
                 res.status(500).json({
                     message:err.message
                 })
             }else{
-                console.log(req.body)
+                try {
+                    // password hashing wala purana signup ka 
+                    const password = req.body.password;
+                    if (!password) {
+                        throw new Error("Password is required");
+                    }
+                    console.log("Password:", password); // Debugging statement
+                    const salt = bcrypt.genSaltSync(10);
+                    const hashedPassword = bcrypt.hashSync(password, salt);
+                    req.body.password = hashedPassword;
+                   
+                    // yaha cloudinary wala part 
+                    const cloudinaryResponse = await  cloudinaryUtil.uploadFilToCloudinary(req.file);
+                    console.log(cloudinaryResponse);
+                    console.log(req.body)
 
-                
-                res.status(200).json({
-                    message:"file uploaded successfully",
-                    data:req.file
-                })
+                    // ab database mai data stor karegeh 
+                    req.body.profilePicPath = cloudinaryResponse.secure_url;
+                    // database mai add karnek alogic 
+                    const createdUser = await userModel.create(req.body);
+                    res.status(201).json({
+                        message: "user created..",
+                        data: createdUser,
+                    });
+                } catch (err) {
+                    console.log(err)
+                    res.status(500).json({
+                        message: "error",
+                        data: err.message,
+                    });
+                }
             }
         });
     };

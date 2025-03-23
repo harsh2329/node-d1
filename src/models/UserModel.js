@@ -66,10 +66,10 @@ const userSchema = new Schema(
         required: true,
         minlength: 8
       },
-      confirmPassword:{
-        type:String,
-        required:true
-      },
+      // confirmPassword:{
+      //   type:String,
+      //   required:true
+      // },
       age: {
         type: Number,
         required: true,
