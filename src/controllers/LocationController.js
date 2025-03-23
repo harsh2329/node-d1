@@ -1,5 +1,6 @@
 const LocationModel = require('../models/LocationModel');
 
+
 const addLocations = async (req, res )  =>{
     try {
     const savedLocations = await LocationModel.create(req.body);

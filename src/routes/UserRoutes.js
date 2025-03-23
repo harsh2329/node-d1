@@ -7,6 +7,6 @@ routes.post("/user", UserController.signup);
 routes.delete("/user/:id", UserController.deleteUsers);
 routes.get("/user/:id", UserController.getUsersById);
 routes.post("/user/login", UserController.Login);
-// routes.post("/user/signup", UserController.signup);
+routes.post("/addwithfile", UserController.addSignupWithFile); 
 
 module.exports = routes;

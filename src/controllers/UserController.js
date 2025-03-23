@@ -1,6 +1,24 @@
 const userModel = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const { sendingMail } = require("../Utils/MailUtil");
+const multer = require('multer');
+const path = require('path'); // npm install path karna hai idhar 
+
+// storage banaya 
+const storage = multer.diskStorage({
+    destination:"./uploads",
+    filename:function(req,file,cb){
+        cb(null,file.originalname)
+    }
+})
+
+//multer ka object banayegeh...
+const upload = multer({
+    storage:storage,
+    //file filter banayegeh for particular file format 
+
+}).single("image") // single , many , array teen option hai issmai 
+
 
 const Login = async (req, res) => {
     try {
@@ -120,6 +138,42 @@ const getUsersById = async (req, res) => {
     });
 };
 
+// const addSignupWithFile = async (req, res) => {  
+// // same naam jo multer ke obj ka banaya hai 
+//     upload(req, res, (err) => {
+//         if(err){
+//             res.status(500).json({
+//                 message:err.message
+//             })
+//         }else{
+//             console.log(req.body)
+//             res.status(200).json({
+//                 message:"file uploaded successfully",
+//                 data:req.file
+//             })
+//         }
+//     });
+// };
+
+const addSignupWithFile = async (req, res) => {  
+    // same naam jo multer ke obj ka banaya hai 
+        upload(req, res, (err) => {
+            if(err){
+                res.status(500).json({
+                    message:err.message
+                })
+            }else{
+                console.log(req.body)
+
+                
+                res.status(200).json({
+                    message:"file uploaded successfully",
+                    data:req.file
+                })
+            }
+        });
+    };
+
 module.exports = {
-    getAllUsers, addUsers, deleteUsers, getUsersById, addUser1, Login, signup
+    getAllUsers, addUsers, deleteUsers, getUsersById, addUser1, Login, signup ,addSignupWithFile
 };
