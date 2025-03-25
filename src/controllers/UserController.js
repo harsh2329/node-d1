@@ -294,10 +294,10 @@ const addSignupWithFile = async (req, res) => {
         //object -->email,id..
         //password encrypt...
         const salt = bcrypt.genSaltSync(10);
-        const hashedPasseord = bcrypt.hashSync(newPassword,salt);
+        const hashedPassword = bcrypt.hashSync(newPassword,salt);
       
         const updatedUser = await userModel.findByIdAndUpdate(userFromToken._id, {
-          password: hashedPasseord,
+          password: hashedPassword,
         });
         res.json({
           message: "password updated successfully..",
