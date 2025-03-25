@@ -4,6 +4,10 @@ const { sendingMail } = require("../Utils/MailUtil");
 const multer = require('multer');
 const path = require('path'); // npm install path karna hai idhar 
 const cloudinaryUtil = require("../Utils/CloudinaryUtil");
+const jwt = require("jsonwebtoken");
+const secret = "1234";
+
+
 // storage banaya 
 const storage = multer.diskStorage({
     // destination:"./uploads",/
@@ -185,6 +189,8 @@ const addSignupWithFile = async (req, res) => {
                     req.body.profilePicPath = cloudinaryResponse.secure_url;
                     // database mai add karnek alogic 
                     const createdUser = await userModel.create(req.body);
+
+                    await sendingMail(createdUser.email, "Welcome to Bhookbusters", "Thank you for signing up!");
                     res.status(201).json({
                         message: "user created..",
                         data: createdUser,
@@ -199,7 +205,109 @@ const addSignupWithFile = async (req, res) => {
             }
         });
     };
+    const forgotPassword = async (req, res) => {
+        try {
+            const { email } = req.body;
+            
+            if (!email) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Email is required",
+                });
+            }
+            
+            const foundUser = await userModel.findOne({ email });
+            
+            if (!foundUser) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found. Please register first.",
+                });
+            }
+            
+            // Generate token
+            try {
+                const token = jwt.sign(foundUser.toObject(), secret, { expiresIn: '24h' });
+                const url = `http://localhost:5173/resetpassword/${token}`;
+                
+                const mailContent = `<html>
+                                     <a href ="${url}">rest password</a>
+                                     </html>`;
+                
+                // Send email
+                try {
+                    await sendingMail(foundUser.email, "Reset Your Password", "Click the link to reset your password", mailContent);
+                    
+                    return res.status(200).json({
+                        success: true,
+                        message: "Password reset link has been sent to your email.",
+                    });
+                } catch (emailError) {
+                    console.error("Email sending error:", emailError);
+                    return res.status(500).json({
+                        success: false,
+                        message: "Failed to send reset email. Please try again later.",
+                    });
+                }
+            } catch (tokenError) {
+                console.error("Token generation error details:", {
+                    message: tokenError.message,
+                    stack: tokenError.stack,
+                    name: tokenError.name
+                });
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to generate reset token. Please try again later.",
+                });
+            }
+        } catch (error) {
+            console.error("Forgot password error:", error);
+            return res.status(500).json({
+                success: false,
+                message: "Server error. Please try again later.",
+            });
+        }
+    };
+    
+    //   const resetpassword = async (req, res) => {
+    //     const token = req.body.token; //decode --> email | id
+    //     const newPassword = req.body.password;
+      
+    //     const userFromToken = jwt.verify(token, secret);
+    //     //object -->email,id..
+    //     //password encrypt...
+    //     const salt = bcrypt.genSaltSync(10);
+    //     const hashedPasseord = bcrypt.hashSync(newPassword,salt);
+      
+    //     const updatedUser = await userModel.findByIdAndUpdate(userFromToken._id, {
+    //       password: hashedPasseord,
+    //     });
+    //     res.json({
+    //       message: "password updated successfully..",
+    //     });
+    //   };
+    const resetpassword = async (req, res) => {
+        const token = req.body.token; //decode --> email | id
+        const newPassword = req.body.password;
+      
+        const userFromToken = jwt.verify(token, secret);
+        //object -->email,id..
+        //password encrypt...
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPasseord = bcrypt.hashSync(newPassword,salt);
+      
+        const updatedUser = await userModel.findByIdAndUpdate(userFromToken._id, {
+          password: hashedPasseord,
+        });
+        res.json({
+          message: "password updated successfully..",
+        });
+      };
+
 
 module.exports = {
     getAllUsers, addUsers, deleteUsers, getUsersById, addUser1, Login, signup ,addSignupWithFile
+    ,forgotPassword,
+  resetpassword
+    
 };

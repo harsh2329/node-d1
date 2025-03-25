@@ -82,4 +82,49 @@ const deleteOffer = async (req, res) => {
     }
 };
 
-module.exports = { addOffer, getAllOffers, getOfferById, updateOffer, deleteOffer };
+const addOfferWithFile = async (req,res) => {
+    upload(req, res, async (err) => {
+    if(err){
+        res.status(500).json({
+            message:err.message
+        })
+    }else{
+        try{
+            let { startDate, endDate, ...restData } = req.body;
+
+            // Convert string dates to JavaScript Date objects
+            startDate = new Date(startDate);
+            endDate = new Date(endDate);
+    
+            // Validate if dates are valid
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                return res.status(400).json({ message: "Invalid date format. Use YYYY-MM-DD format." });
+            }
+    
+            const savedOffer = await OfferModel.create({ startDate, endDate, ...restData });
+    
+            res.status(201).json({
+                message: "Offer added successfully",
+                data: savedOffer,
+            });
+
+            //cloudinary wala part 
+              const cloudinaryResponse = await  cloudinaryUtil.uploadFilToCloudinary(req.file);
+                                console.log(cloudinaryResponse);
+                                console.log(req.body)
+            
+                                // ab database mai data stor karegeh 
+                                req.body.profilePicPath = cloudinaryResponse.secure_url;
+
+        }catch(err){
+            console.log(err)
+            res.status(500).json({
+                message: "error",
+                data: err.message,
+            });
+        }
+    }
+    });
+};
+
+module.exports = { addOffer, getAllOffers, getOfferById, updateOffer, deleteOffer, addOfferWithFile };

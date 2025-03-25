@@ -36,6 +36,10 @@ const OfferSchema = new Schema({
         ref: 'Location',  // Linking to a specific restaurant branch
         required: true,
     },
+    OfferImage: {
+         type:String,
+         required:true,
+    },
    
 }, { timestamps: true });
 

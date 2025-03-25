@@ -1,6 +1,6 @@
 const mailer = require('nodemailer');
 
-const sendingMail = async (to, subject, text) => {
+const sendingMail = async (to, subject, text, htmlContent = null) => {
     try {
         const transporter = mailer.createTransport({
             service: 'gmail',
@@ -18,15 +18,21 @@ const sendingMail = async (to, subject, text) => {
             to: to,
             subject: subject,
             text: text,
-            html: 'Embedded image: <img src="cid:unique@nodemailer.com"/>',
-            attachments: [
+        };
+        
+        // Use the provided HTML content if available, otherwise use the default
+        if (htmlContent) {
+            mailOptions.html = htmlContent;
+        } else {
+            mailOptions.html = 'Embedded image: <img src="cid:unique@nodemailer.com"/>';
+            mailOptions.attachments = [
                 {
                     filename: 'mail.png',
                     path: __dirname + '/mail.png',
-                    cid: 'unique@nodemailer.com' 
+                    cid: 'unique@nodemailer.com'
                 }
-            ]
-        };
+            ];
+        }
 
         const mailresponse = await transporter.sendMail(mailOptions);
         console.log(mailresponse);
@@ -43,4 +49,3 @@ module.exports = { sendingMail };
 //     .catch(error => {
 //         console.error('Failed to send email:', error);
 //     });
-
