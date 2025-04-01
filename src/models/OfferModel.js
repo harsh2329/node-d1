@@ -31,15 +31,14 @@ const OfferSchema = new Schema({
         type: Number,
         required: true,
     },
-    locationId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Location',  // Linking to a specific restaurant branch
-        required: true,
-    },
     OfferImage: {
          type:String,
          required:true,
     },
+    Category:{
+        type:"String",
+        required:true,
+    }
    
 }, { timestamps: true });
 

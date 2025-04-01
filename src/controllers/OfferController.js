@@ -1,5 +1,19 @@
 const OfferModel = require('../models/OfferModel');
-const LocationModel = require('../models/LocationModel');
+const multer = require('multer');
+const cloudinaryUtil = require("../Utils/CloudinaryUtil");
+const mongoose = require('mongoose');
+
+// Multer storage configuration
+const storage = multer.diskStorage({
+    filename: function(req, file, cb) {
+        cb(null, file.originalname)
+    }
+});
+
+// Multer upload configuration
+const upload = multer({
+    storage: storage
+}).single("OfferImage");
 
 const addOffer = async (req, res) => {
     try {
@@ -21,37 +35,111 @@ const addOffer = async (req, res) => {
             data: savedOffer,
         });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error(err);
+        res.status(500).json({ 
+            message: "Error adding offer", 
+            error: err.message 
+        });
     }
 };
 
+const addOfferWithFile = async (req, res) => {
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({
+                message: err.message
+            });
+        }
+
+        try {
+            let { startDate, endDate, ...restData } = req.body;
+
+            // Convert string dates to JavaScript Date objects
+            startDate = new Date(startDate);
+            endDate = new Date(endDate);
+
+            // Validate if dates are valid
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                return res.status(400).json({ message: "Invalid date format. Use YYYY-MM-DD format." });
+            }
+
+            // Upload image to Cloudinary if file exists
+            if (req.file) {
+                const cloudinaryResponse = await cloudinaryUtil.uploadFilToCloudinary(req.file);
+                restData.OfferImage = cloudinaryResponse.secure_url;
+            }
+
+            // Create offer with image URL
+            const savedOffer = await OfferModel.create({ 
+                startDate, 
+                endDate, 
+                ...restData 
+            });
+
+            res.status(201).json({
+                message: "Offer added successfully with file",
+                data: savedOffer,
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                message: "Error adding offer with file",
+                error: err.message,
+            });
+        }
+    });
+};
 
 const getAllOffers = async (req, res) => {
     try {
-        const offers = await OfferModel.find().populate("locationId createdBy");
+        const offers = await OfferModel.find().populate(" createdBy");
         res.status(200).json({
             message: "All offers fetched successfully",
             data: offers,
         });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error(err);
+        res.status(500).json({ 
+            message: "Error fetching offers", 
+            error: err.message 
+        });
     }
 };
-
 const getOfferById = async (req, res) => {
     try {
-        const offer = await OfferModel.findById(req.params.id).populate("locationId createdBy");
-        if (!offer) {
-            return res.status(404).json({ message: "Offer not found" });
-        }
-        res.status(200).json({
-            message: "Offer fetched successfully",
-            data: offer,
+      // Log the incoming request ID for debugging
+      console.log('Requested Offer ID:', req.params.id);
+  
+      // Validate ObjectId before querying
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ 
+          message: "Invalid Offer ID format" 
         });
+      }
+  
+      const offer = await OfferModel.findById(req.params.id);
+  
+      // Log if offer is found or not
+      if (!offer) {
+        console.log('No offer found with ID:', req.params.id);
+        return res.status(404).json({ 
+          message: "Offer not found" 
+        });
+      }
+  
+      res.status(200).json({
+        message: "Offer fetched successfully",
+        data: offer
+      });
+  
     } catch (err) {
-        res.status(500).json({ message: err.message });
+      console.error('Offer Fetch Error:', err);
+      res.status(500).json({
+        message: "Error fetching offer",
+        error: err.message
+      });
     }
-};
+  };
 
 const updateOffer = async (req, res) => {
     try {
@@ -64,7 +152,11 @@ const updateOffer = async (req, res) => {
             data: updatedOffer,
         });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error(err);
+        res.status(500).json({ 
+            message: "Error updating offer", 
+            error: err.message 
+        });
     }
 };
 
@@ -78,53 +170,19 @@ const deleteOffer = async (req, res) => {
             message: "Offer deleted successfully",
         });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error(err);
+        res.status(500).json({ 
+            message: "Error deleting offer", 
+            error: err.message 
+        });
     }
 };
 
-const addOfferWithFile = async (req,res) => {
-    upload(req, res, async (err) => {
-    if(err){
-        res.status(500).json({
-            message:err.message
-        })
-    }else{
-        try{
-            let { startDate, endDate, ...restData } = req.body;
-
-            // Convert string dates to JavaScript Date objects
-            startDate = new Date(startDate);
-            endDate = new Date(endDate);
-    
-            // Validate if dates are valid
-            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-                return res.status(400).json({ message: "Invalid date format. Use YYYY-MM-DD format." });
-            }
-    
-            const savedOffer = await OfferModel.create({ startDate, endDate, ...restData });
-    
-            res.status(201).json({
-                message: "Offer added successfully",
-                data: savedOffer,
-            });
-
-            //cloudinary wala part 
-              const cloudinaryResponse = await  cloudinaryUtil.uploadFilToCloudinary(req.file);
-                                console.log(cloudinaryResponse);
-                                console.log(req.body)
-            
-                                // ab database mai data stor karegeh 
-                                req.body.profilePicPath = cloudinaryResponse.secure_url;
-
-        }catch(err){
-            console.log(err)
-            res.status(500).json({
-                message: "error",
-                data: err.message,
-            });
-        }
-    }
-    });
+module.exports = { 
+    addOffer, 
+    getAllOffers, 
+    getOfferById, 
+    updateOffer, 
+    deleteOffer, 
+    addOfferWithFile 
 };
-
-module.exports = { addOffer, getAllOffers, getOfferById, updateOffer, deleteOffer, addOfferWithFile };

@@ -32,7 +32,8 @@ app.use("/location",locationRoutes) //http://localhost:3000/location/add
 const offerRoutes = require("./src/routes/OfferRoutes")
 app.use("/offer",offerRoutes) //http://localhost:3000/offer/alloffer 
 
-
+const RlsRoutes = require("./src/routes/RlsRoutes")
+app.use("/reslogsign" , RlsRoutes)
 
 mongoose.connect("mongodb://127.0.0.1:27017/25_node_internship").then(()=>{
     console.log("database connected....")
