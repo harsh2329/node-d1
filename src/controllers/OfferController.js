@@ -1,7 +1,22 @@
+
 const OfferModel = require('../models/OfferModel');
 const multer = require('multer');
 const cloudinaryUtil = require("../Utils/CloudinaryUtil");
 const mongoose = require('mongoose');
+
+// Predefined categories for offers
+const categories = [
+    "Food & Beverages",
+    "Electronics",
+    "Clothing",
+    "Home & Kitchen",
+    "Beauty & Personal Care",
+    "Sports & Fitness",
+    "Books & Media",
+    "Travel",
+    "Entertainment",
+    "Others"
+];
 
 // Multer storage configuration
 const storage = multer.diskStorage({
@@ -92,7 +107,7 @@ const addOfferWithFile = async (req, res) => {
 
 const getAllOffers = async (req, res) => {
     try {
-        const offers = await OfferModel.find().populate(" createdBy");
+        const offers = await OfferModel.find().populate();
         res.status(200).json({
             message: "All offers fetched successfully",
             data: offers,
@@ -105,41 +120,42 @@ const getAllOffers = async (req, res) => {
         });
     }
 };
+
 const getOfferById = async (req, res) => {
     try {
-      // Log the incoming request ID for debugging
-      console.log('Requested Offer ID:', req.params.id);
-  
-      // Validate ObjectId before querying
-      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(400).json({ 
-          message: "Invalid Offer ID format" 
+        // Log the incoming request ID for debugging
+        console.log('Requested Offer ID:', req.params.id);
+    
+        // Validate ObjectId before querying
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ 
+                message: "Invalid Offer ID format" 
+            });
+        }
+    
+        const offer = await OfferModel.findById(req.params.id);
+    
+        // Log if offer is found or not
+        if (!offer) {
+            console.log('No offer found with ID:', req.params.id);
+            return res.status(404).json({ 
+                message: "Offer not found" 
+            });
+        }
+    
+        res.status(200).json({
+            message: "Offer fetched successfully",
+            data: offer
         });
-      }
-  
-      const offer = await OfferModel.findById(req.params.id);
-  
-      // Log if offer is found or not
-      if (!offer) {
-        console.log('No offer found with ID:', req.params.id);
-        return res.status(404).json({ 
-          message: "Offer not found" 
-        });
-      }
-  
-      res.status(200).json({
-        message: "Offer fetched successfully",
-        data: offer
-      });
-  
+    
     } catch (err) {
-      console.error('Offer Fetch Error:', err);
-      res.status(500).json({
-        message: "Error fetching offer",
-        error: err.message
-      });
+        console.error('Offer Fetch Error:', err);
+        res.status(500).json({
+            message: "Error fetching offer",
+            error: err.message
+        });
     }
-  };
+};
 
 const updateOffer = async (req, res) => {
     try {
@@ -178,11 +194,28 @@ const deleteOffer = async (req, res) => {
     }
 };
 
+// New endpoint to get all categories
+const getCategories = async (req, res) => {
+    try {
+        res.status(200).json({
+            message: "Categories fetched successfully",
+            data: categories,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ 
+            message: "Error fetching categories", 
+            error: err.message 
+        });
+    }
+};
+
 module.exports = { 
     addOffer, 
     getAllOffers, 
     getOfferById, 
     updateOffer, 
     deleteOffer, 
-    addOfferWithFile 
+    addOfferWithFile,
+    getCategories
 };

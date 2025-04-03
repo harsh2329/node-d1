@@ -1,7 +1,8 @@
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const OfferSchema = new Schema({ 
+const OfferSchema = new Schema({
     title: {
         type: String,
         required: true,
@@ -32,14 +33,13 @@ const OfferSchema = new Schema({
         required: true,
     },
     OfferImage: {
-         type:String,
-         required:true,
+        type: String,
+        required: true,
     },
-    Category:{
-        type:"String",
-        required:true,
+    Category: {
+        type: String,
+        required: true,
     }
-   
 }, { timestamps: true });
 
 module.exports = mongoose.model('Offer', OfferSchema);
