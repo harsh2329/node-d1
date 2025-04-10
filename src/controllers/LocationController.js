@@ -17,7 +17,7 @@ const addLocations = async (req, res )  =>{
 
 const getAllLocations = async(req,res)=>{
     try{
-  const Locations = await LocationModel.find().populate(" stateId cityId areaId ");
+      const Locations = await LocationModel.find().populate(["stateId", "cityId", "areaId"]);
   if (Locations.length === 0){
     res.status(404).json({
       message:"No Locations found"

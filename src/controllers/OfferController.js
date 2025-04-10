@@ -382,11 +382,27 @@ const deleteOffer = async (req, res) => {
     }
 };
 
+const getCategories = async (req, res) => {
+    try {
+        res.status(200).json({
+            message: "Categories fetched successfully",
+            data: categories,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ 
+            message: "Error fetching categories", 
+            error: err.message 
+        });
+    }
+};
+
 module.exports = { 
     addOffer, 
     getAllOffers, 
     getOfferById, 
     updateOffer, 
     deleteOffer, 
-    addOfferWithFile
+    addOfferWithFile,
+    getCategories
 };

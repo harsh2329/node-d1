@@ -36,10 +36,10 @@ const OfferSchema = new Schema({
         type: String,
         required: true,
     },
-    Category: {
-        type: String,
-        required: true,
-    }
+    // Category: {
+    //     type: String,
+        
+    // }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Offer', OfferSchema);
