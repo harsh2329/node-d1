@@ -4,34 +4,6 @@ const Schema = mongoose.Schema
 const userSchema = new Schema(
     {
 
-    //     userId:{
-    //         type:Number,
-    //     },
-    //     UserName:{
-    //         type:String
-    //     },
-    //     Email:{
-    //         type:String,
-    //         unique:true
-    //     },
-    //     Password:{
-    //         type:String
-    //     },
-    //     ConfirmPassword:{
-    //         type:String
-    //     },
-    //     Role:{
-    //         type:String
-
-    //     },
-    //     DateJoined:{
-    //         type:Date  
-    //     },
-    //     roleId:{
-    //         type:Schema.Types.ObjectId,
-    //         ref:"roles"
-    //     },
-    // // }
     
       firstname: {
         type: String,
@@ -80,10 +52,15 @@ const userSchema = new Schema(
         type: String,
         default: '' // Default to empty string, can be updated later
       },
-      role: {
-        type: String,
-        enum: ['user', 'admin', 'manager'],
-        default: 'user'
+      // role: {
+      //   type: String,
+      //   enum: ['user', 'admin', 'manager'],
+      //   default: 'user'
+      // },
+      roleId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'role', // assuming you have a role model
+        // required: true
       },
       createdAt: {
         type: Date,

@@ -13,7 +13,7 @@ app.use(roleRoutes)
 
 //userRoutes
 const userRoutes = require("./src/routes/UserRoutes")
-app.use(userRoutes)
+app.use("/usr",userRoutes)
 
 const stateRoutes = require("./src/routes/StateRoutes")
 app.use("/state",stateRoutes) //
@@ -34,6 +34,9 @@ app.use("/offer",offerRoutes) //http://localhost:3000/offer/alloffer
 
 const RlsRoutes = require("./src/routes/RlsRoutes")
 app.use("/reslogsign" , RlsRoutes)
+
+const AdminRoutes = require("./src/routes/AdminRoutes")
+app.use("/admin", AdminRoutes) //http://localhost:3000/admin/login
 
 mongoose.connect("mongodb://127.0.0.1:27017/25_node_internship").then(()=>{
     console.log("database connected....")
