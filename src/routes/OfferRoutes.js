@@ -17,7 +17,7 @@ router.get('/categories', getCategories);
 
 // Define routes
 router.post('/add', addOffer);
-router.post('/add-with-file', addOfferWithFile);
+router.post('/addwithfile', addOfferWithFile);
 router.get('/all', getAllOffers);
 router.get('/:id', getOfferById);
 router.put('/:id', updateOffer);

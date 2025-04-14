@@ -1,6 +1,6 @@
 const cloudinary = require('cloudinary').v2;
 
-const uploadFilToCloudinary = async (file) => {
+const uploadFileToCloudinary = async (file) => {
 
     const config = cloudinary.config({
         cloud_name: "drjtxitr0",
@@ -13,5 +13,5 @@ const uploadFilToCloudinary = async (file) => {
 };
 
 module.exports = {
-    uploadFilToCloudinary
+    uploadFileToCloudinary
 };
