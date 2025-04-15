@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const { sendingMail } = require("../Utils/MailUtil");
 const multer = require('multer');
 const path = require('path'); // npm install path karna hai idhar 
-const cloudinaryUtil = require("../Utils/CloudinaryUtil");
+const cloudinaryUtil = require("../utils/cloudinaryUtil");
 const jwt = require("jsonwebtoken");
 const secret = "1234";
 
