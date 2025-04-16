@@ -115,64 +115,126 @@ const getAllLocationByUserId = async (req,res)=>{
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }).single('file'); // Define this at the top level
 
-const addLocationWithFile = async (req, res) => {
-  // Use upload as middleware outside the route handler
-  upload(req, res, async (err) => {
-    if(err) {
-      return res.status(500).json({
-        message: err.message
-      });
-    }
+// const addLocationWithFile = async (req, res) => {
+//   // Use upload as middleware outside the route handler
+//   upload(req, res, async (err) => {
+//     if(err) {
+//       return res.status(500).json({
+//         message: err.message
+//       });
+//     }
     
-    try {
-      console.log(req.body);
+//     try {
+//       console.log(req.body);
+//       console.log("Cloudinary upload response:", cloudinaryResponse);
+// console.log("Image path being saved:", req.body.imagePath);
       
-      // Check for required fields
-      const requiredFields = [
-        'title', 'category', 'description', 'timmings', 
-        'active', 'contactNumber', 'address', 'stateId', 
-        'userId', 'foodtype', 'latitude', 'longtitude'
-      ];
+//       // Check for required fields
+//       const requiredFields = [
+//         'title', 'category', 'description', 'timmings', 
+//         'active', 'contactNumber', 'address', 'stateId', 
+//         'userId', 'foodtype', 'latitude', 'longtitude'
+//       ];
       
-      const missingFields = [];
+//       const missingFields = [];
       
-      requiredFields.forEach(field => {
-        if (req.body[field] === undefined) {
-          missingFields.push(field);
-        }
-      });
+//       requiredFields.forEach(field => {
+//         if (req.body[field] === undefined) {
+//           missingFields.push(field);
+//         }
+//       });
       
-      if (missingFields.length > 0) {
-        return res.status(400).json({
-          message: `Missing required fields: ${missingFields.join(', ')}`
+//       if (missingFields.length > 0) {
+//         return res.status(400).json({
+//           message: `Missing required fields: ${missingFields.join(', ')}`
+//         });
+//       }
+      
+//       // Upload file to Cloudinary if a file exists
+//       if(req.file) {
+//         const cloudinaryResponse = await cloudinaryUtil.uploadFilToCloudinary(req.file);
+//         console.log(cloudinaryResponse);
+        
+//         // Add the Cloudinary URL to the request body
+//         req.body.imagePath = cloudinaryResponse.secure_url;
+//       }
+      
+//       // Create location in database
+//       const createdLocation = await LocationModel.create(req.body);
+      
+//       res.status(201).json({
+//         message: "Location created successfully",
+//         data: createdLocation
+//       });
+//     } catch (err) {
+//       console.log(err);
+//       res.status(500).json({
+//         message: "Error adding location",
+//         data: err.message
+//       });
+//     }
+//   });
+// };
+
+const addLocationWithFile = async (req, res) => {
+    // Use upload as middleware outside the route handler
+    upload(req, res, async (err) => {
+      if(err) {
+        return res.status(500).json({
+          message: err.message
         });
       }
       
-      // Upload file to Cloudinary if a file exists
-      if(req.file) {
-        const cloudinaryResponse = await cloudinaryUtil.uploadFilToCloudinary(req.file);
-        console.log(cloudinaryResponse);
+      try {
+        console.log(req.body);
         
-        // Add the Cloudinary URL to the request body
-        req.body.imagePath = cloudinaryResponse.secure_url;
+        // Check for required fields
+        const requiredFields = [
+          'title', 'category', 'description', 'timmings', 
+          'active', 'contactNumber', 'address', 'stateId',
+          'userId', 'foodtype', 'latitude', 'longtitude'
+        ];
+        
+        const missingFields = [];
+        
+        requiredFields.forEach(field => {
+          if (req.body[field] === undefined) {
+            missingFields.push(field);
+          }
+        });
+        
+        if (missingFields.length > 0) {
+          return res.status(400).json({
+            message: `Missing required fields: ${missingFields.join(', ')}`
+          });
+        }
+        
+        // Upload file to Cloudinary if a file exists
+        if(req.file) {
+          const cloudinaryResponse = await cloudinaryUtil.uploadFileToCloudinary(req.file);
+          console.log("Cloudinary upload response:", cloudinaryResponse);
+          
+          // Add the Cloudinary URL to the request body
+          req.body.imagePath = cloudinaryResponse.secure_url;
+          console.log("Image path being saved:", req.body.imagePath);
+        }
+        
+        // Create location in database
+        const createdLocation = await LocationModel.create(req.body);
+        
+        res.status(201).json({
+          message: "Location created successfully",
+          data: createdLocation
+        });
+      } catch (err) {
+        console.log(err);
+        res.status(500).json({
+          message: "Error adding location",
+          data: err.message
+        });
       }
-      
-      // Create location in database
-      const createdLocation = await LocationModel.create(req.body);
-      
-      res.status(201).json({
-        message: "Location created successfully",
-        data: createdLocation
-      });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({
-        message: "Error adding location",
-        data: err.message
-      });
-    }
-  });
-};
+    });
+  };
 
 module.exports = {
     addLocations,

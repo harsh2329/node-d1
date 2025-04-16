@@ -33,7 +33,7 @@ const offerRoutes = require("./src/routes/OfferRoutes")
 app.use("/offer",offerRoutes) //http://localhost:3000/offer/alloffer 
 
 const RlsRoutes = require("./src/routes/RlsRoutes")
-app.use("/reslogsign" , RlsRoutes)
+app.use("/reslogsign" , RlsRoutes) 
 
 const AdminRoutes = require("./src/routes/AdminRoutes")
 app.use("/admin", AdminRoutes) //http://localhost:3000/admin/login

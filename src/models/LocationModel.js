@@ -44,11 +44,11 @@ areaId:{
     type:Schema.Types.ObjectId,
     ref:"Area",
 },
-userId:{
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-    required: true
-},
+// userId:{
+//     type: Schema.Types.ObjectId,
+//     ref: 'users',
+//     required: true
+// },
 foodtype:{
     type:String,
     required:true,
@@ -61,6 +61,10 @@ longtitude:{
     type:String,
     required:true,
 },
+imagePath: {
+    type: String,
+    // Not required in case some locations don't have images
+  }
 
 });
 
