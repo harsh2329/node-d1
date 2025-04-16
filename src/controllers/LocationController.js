@@ -56,61 +56,39 @@ const getAllLocationByUserId = async (req,res)=>{
     }
 }
 
-// const addLocationWithFile = async (req, res) => {
-//   try {
-//     // Assuming 'XMLHttpRequestUpload' is a middleware-like function
-//     await XMLHttpRequestUpload(req, res);
-//     res.status(200).json({
-//       message: "File uploaded and location added successfully",
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({
-//       message: err.message,
-//     });
-//   }
-// };
-// const multer = require('multer');
-// const upload = multer({ dest: 'uploads/' }).single('file'); // Adjust configuration as needed
-
-// const addLocationWithFile = async (req, res) => {
-//   // Using the same multer upload middleware as in user controller
-//   upload(req, res, async (err) => {
-//       if(err){
-//           res.status(500).json({
-//               message: err.message
-//           });
-//       } else {
-//           try {
-//               // Process the request body data if needed
-//               console.log(req.body);
-              
-//               // Upload file to Cloudinary if a file exists
-//               if(req.file) {
-//                   const cloudinaryResponse = await cloudinaryUtil.uploadFilToCloudinary(req.file);
-//                   console.log(cloudinaryResponse);
-                  
-//                   // Add the Cloudinary URL to the request body
-//                   req.body.imagePath = cloudinaryResponse.secure_url;
-//               }
-              
-//               // Create location in database - CHANGE TO LocationModel (uppercase L)
-//               const createdLocation = await LocationModel.create(req.body);
-              
-//               res.status(201).json({
-//                   message: "Location created successfully",
-//                   data: createdLocation
-//               });
-//           } catch (err) {
-//               console.log(err);
-//               res.status(500).json({
-//                   message: "Error adding location",
-//                   data: err.message
-//               });
-//           }
-//       }
-//   });
-// };
+// Fixed delete function
+const deleteRestaurant = async (req, res) => {
+  console.log("Delete request received with ID:", req.params.id);
+  
+  try {
+      // Make sure we have a valid ID
+      if (!req.params.id || req.params.id === ':id') {
+          return res.status(400).json({ 
+              message: "Invalid ID provided",
+              error: "You must provide a valid MongoDB ID"
+          });
+      }
+      
+      const deletedLocation = await LocationModel.findByIdAndDelete(req.params.id);
+      
+      if (!deletedLocation) {
+          return res.status(404).json({ 
+              message: "Location not found" 
+          });
+      }
+      
+      res.status(200).json({
+          message: "Location deleted successfully",
+          deletedId: req.params.id
+      });
+  } catch (err) {
+      console.error("Delete error:", err);
+      res.status(500).json({
+          message: "Error deleting location",
+          error: err.message
+      });
+  }
+};
 
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }).single('file'); // Define this at the top level
@@ -240,5 +218,6 @@ module.exports = {
     addLocations,
     getAllLocations,
     getAllLocationByUserId,
-    addLocationWithFile
+    addLocationWithFile,
+    deleteRestaurant
 };

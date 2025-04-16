@@ -222,7 +222,7 @@
 
 const OfferModel = require('../models/OfferModel');
 const multer = require('multer');
-const cloudinaryUtil = require("../Utils/CloudinaryUtil");
+const cloudinaryUtil = require("../utils/cloudinaryUtil");
 const mongoose = require('mongoose');
 
 // Multer storage configuration

@@ -181,7 +181,7 @@ const addSignupWithFile = async (req, res) => {
                     req.body.password = hashedPassword;
                    
                     // yaha cloudinary wala part 
-                    const cloudinaryResponse = await  cloudinaryUtil.uploadFilToCloudinary(req.file);
+                    const cloudinaryResponse = await cloudinaryUtil.uploadFileToCloudinary(req.file);
                     console.log(cloudinaryResponse);
                     console.log(req.body)
 

@@ -17,5 +17,8 @@ routes.get('/all', LocationController.getAllLocations);
 // Change this line - use the correct function name
 routes.get('/all/:id', LocationController.getAllLocationByUserId);
 routes.post('/locationwithfile', LocationController.addLocationWithFile);
+// routes.delete('/restaurants/:id', LocationController.deleteRestaurant);
+// routes.delete('/locations/:id', LocationController.deleteRestaurant);
+routes.delete('/locations/:id', LocationController.deleteRestaurant);
 
 module.exports = routes;
